@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    {% for trek in treks %}
+        Trek Name : {{ trek.trek_name }} <br>
+    {% endfor %}
+
+    <a href="/add_trek"><button>Add Trek</button></a>
+</body>
+</html>
