@@ -7,7 +7,12 @@
 </head>
 <body>
     {% for trek in treks %}
-        Trek Name : {{ trek.trek_name }} <br>
+        Trek Name : {{ trek.trek_name }} &nbsp; <a href="/add_trek/{{ trek.trek_id }}"><button>Update Trek</button></a>
+        <form method="POST" action="/add_trek">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="trek_id" value="{{ trek.trek_id }}">
+            <button type="submit">Delete</button>
+        </form>
     {% endfor %}
 
     <a href="/add_trek"><button>Add Trek</button></a>

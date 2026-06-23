@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Trek</title>
+</head>
+<body>
+    <form method="POST" action="/edit_trek">
+        <label for="trek_name">Trek Name</label>
+        <input type="text" id="trek_name" name="trek_name" value="{{trek.trek_name}}" required><br>
+        <input type="submit" value="Update Trek">
+    </form>
+</body>
+</html>

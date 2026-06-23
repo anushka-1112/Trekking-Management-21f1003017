@@ -43,16 +43,66 @@ def login():
             return render_template('login.html')
 
 @app.route('/add_trek', methods=['GET', 'POST'])
-def add_trek():
-    if request.method=='GET':
-        return render_template("add_trek.html")
-    if request.method=='POST':
+@app.route('/add_trek/<int:trek_id>', methods=['GET', 'PATCH', 'DELETE'])
+def add_trek(trek_id=None):
+    method = request.environ.get('REQUEST_METHOD', request.method)
+    if method=='GET':
+        if not trek_id:
+            trek_id = request.args.get('trek_id')
+        trek = None
+        if trek_id:
+            print(trek_id)
+            trek = db.session.get(Trek, trek_id)
+        return render_template("add_trek.html", trek=trek)
+    
+
+    if method=='POST':
         trek_name= request.form.get('trek_name')
         trek = Trek(trek_name=trek_name)
         db.session.add(trek)
         db.session.commit()
         treks=Trek.query.all()
         return render_template("admin_dashboard.html", treks=treks)
+
+    if method == 'PATCH':
+        trek_id = request.form.get('trek_id')
+        trek_name = request.form.get('trek_name_upd')
+        trek = db.session.get(Trek, trek_id)
+        trek.trek_name=trek_name
+        db.session.commit()
+        treks=Trek.query.all()
+        return render_template("admin_dashboard.html", treks=treks)
+    
+    if method=='DELETE':
+        trek_id = request.form.get('trek_id')
+        trek = db.session.get(Trek, trek_id)
+        db.session.delete(trek)
+        db.session.commit()
+        treks=Trek.query.all()
+        return render_template("admin_dashboard.html", treks=treks)
+
+
+@app.before_request
+def before_request():
+    if request.method=='POST' and '_method' in request.form:
+        method = request.form.get('_method').upper()
+        if method in ['PATCH', 'DELETE', 'PUT']:
+            request.environ['REQUEST_METHOD']=method
+
+# @app.route('/update_trek/<int:trek_id>', methods=['GET', 'POST'])
+# def update_trek(trek_id):
+#     if request.method=='GET':
+#         trek = Trek.query.get(trek_id=trek_id)
+#         return render_template("edit_trek.html", trek=trek)
+#     if request.method=='POST':
+#         trek_name= request.form.get('trek_name')
+#         # trek = Trek.query.get(trek_id=trek_id)
+#         # trek.trek_name=trek_name
+#         trek = Trek.query.filter_by(trek_id=trek_id).update(dict(trek_name=trek_name))
+#         db.session.commit()
+#         treks=Trek.query.all()
+#         return render_template("admin_dashboard.html", treks=treks)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
