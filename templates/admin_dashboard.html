@@ -6,6 +6,22 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
+    <form method="POST" action="/search_trek">
+        <input type="text" name="s_trek" placeholder="Enter the trek name you want to search" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if search_performed %}
+        {% if searched_data %}
+        <h3>Searched Data</h3>
+            {% for searched_trek in searched_data %}
+                {{ searched_trek.trek_name }}
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    <br>
+    <br>
+    <h3>All Treks</h3>
     {% for trek in treks %}
         Trek Name : {{ trek.trek_name }} &nbsp; <a href="/add_trek/{{ trek.trek_id }}"><button>Update Trek</button></a>
         <form method="POST" action="/add_trek">
@@ -14,7 +30,8 @@
             <button type="submit">Delete</button>
         </form>
     {% endfor %}
-
+    <br>
+    <br>
     <a href="/add_trek"><button>Add Trek</button></a>
 </body>
 </html>

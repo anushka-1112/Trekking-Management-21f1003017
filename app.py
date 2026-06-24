@@ -13,6 +13,7 @@ with app.app_context():
     if admin is None:
         admin=User(user_email='admin@gmail.com',
                    user_password= 'admin123',
+                   user_name='Admin',
                    role='admin')
         db.session.add(admin)
         db.session.commit()
@@ -29,8 +30,6 @@ def login():
         user_email=request.form.get('user_email')
         user_password = request.form.get('user_password')
         user = User.query.filter_by(user_email=user_email, user_password=user_password).first()
-        print(user)
-        print(user.role)
         if user is not None:
             if user.role=='admin':
                 treks=Trek.query.all()
@@ -88,6 +87,40 @@ def before_request():
         method = request.form.get('_method').upper()
         if method in ['PATCH', 'DELETE', 'PUT']:
             request.environ['REQUEST_METHOD']=method
+
+@app.route('/search_trek', methods=['GET', 'POST'])
+def search_treks():
+    if request.method=='GET':
+        treks=Trek.query.all()
+        return render_template("admin_dashboard.html", treks=treks)
+    if request.method=='POST':
+        search_string = request.form.get('s_trek', '').strip() #--ek--
+        searched_treks=[]
+        search_performed=True
+        if search_string:
+            searched_treks = Trek.query.filter(Trek.trek_name.ilike(f'%{search_string}%')).all()
+        treks=Trek.query.all()
+        return render_template("admin_dashboard.html", treks=treks,
+                               search_performed=search_performed,
+                               searched_data = searched_treks)   
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method=='GET':
+        return render_template('register.html')
+    elif request.method=='POST':
+        email=request.form.get("user_email")
+        password=request.form.get("user_password")
+        name = request.form.get("user_name")
+        role = request.form.get("role")
+        if role in ('user', 'trek_staff'):
+            new_user = User(user_name=name,
+                            user_email=email,
+                            user_password=password,
+                            role=role)
+            db.session.add(new_user)
+            db.session.commit()
+        return redirect('/login')
 
 # @app.route('/update_trek/<int:trek_id>', methods=['GET', 'POST'])
 # def update_trek(trek_id):
