@@ -22,6 +22,11 @@ with app.app_context():
 def home():
     return render_template("home.html")
 
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    treks=Trek.query.all()
+    return render_template("admin_dashboard.html", treks=treks)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method=='GET':
@@ -33,7 +38,7 @@ def login():
         if user is not None:
             if user.role=='admin':
                 treks=Trek.query.all()
-                return render_template("admin_dashboard.html", treks=treks)
+                return redirect('/admin_dashboard')
             if user.role=='trek_staff':
                 return render_template('trek_staff_dashboard.html')
             if user.role=='user':
