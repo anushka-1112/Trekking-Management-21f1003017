@@ -25,7 +25,8 @@ def home():
 @app.route('/admin_dashboard')
 def admin_dashboard():
     treks=Trek.query.all()
-    return render_template("admin_dashboard.html", treks=treks)
+    users = User.query.all()
+    return render_template("admin_dashboard.html", treks=treks, users=users)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -40,7 +41,7 @@ def login():
                 treks=Trek.query.all()
                 return redirect('/admin_dashboard')
             if user.role=='trek_staff':
-                return render_template('trek_staff_dashboard.html')
+                return render_template('trek_staff_dashboard.html', approved_status = user.approved)
             if user.role=='user':
                 return render_template('user_dashboard.html')
         else:
@@ -126,6 +127,13 @@ def register():
             db.session.add(new_user)
             db.session.commit()
         return redirect('/login')
+
+@app.route('/staff_approve/<int:user_id>')
+def approve_staff_profile(user_id):
+    user = db.session.get(User, user_id)
+    user.approved=True
+    db.session.commit()
+    return redirect('/admin_dashboard')
 
 # @app.route('/update_trek/<int:trek_id>', methods=['GET', 'POST'])
 # def update_trek(trek_id):

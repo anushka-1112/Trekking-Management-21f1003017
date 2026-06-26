@@ -7,5 +7,10 @@
 </head>
 <body>
     <h1>Trek Staff Dashboard</h1>
+    {% if approved_status %}
+
+    {% else %}
+        <h5>Not Approved By Admin</h5>
+    {% endif %}
 </body>
 </html>

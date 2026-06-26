@@ -33,5 +33,17 @@
     <br>
     <br>
     <a href="/add_trek"><button>Add Trek</button></a>
+    <br>
+    {% for user in users %}
+        {% if user.role == 'trek_staff' and user.approved %}
+            {{ user.user_name }}<br>
+        {% elif user.role == 'trek_staff' and not user.approved %}
+            {{ user.user_name }} &nbsp; <a href="/staff_approve/{{user.user_id}}"><button>Approve</button></a><br>
+
+        {% elif user.role == 'user' %}
+            {{ user.user_name }}<br>
+
+        {% endif %}
+    {% endfor %}
 </body>
 </html>
