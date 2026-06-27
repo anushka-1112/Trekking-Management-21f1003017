@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %} Admin Dashboard {% endblock %}
+
+{% block content %}
     <form method="POST" action="/search_trek">
         <input type="text" name="s_trek" placeholder="Enter the trek name you want to search" required>
         <button type="submit">Search</button>
@@ -38,12 +34,11 @@
         {% if user.role == 'trek_staff' and user.approved %}
             {{ user.user_name }}<br>
         {% elif user.role == 'trek_staff' and not user.approved %}
-            {{ user.user_name }} &nbsp; <a href="/staff_approve/{{user.user_id}}"><button>Approve</button></a><br>
+            {{ user.user_name }} &nbsp; <a href="/staff_approve/{{user.user_id}}"><button>Approve</button></a> &nbsp; {% if not user.blacklisted %} <a href="/blacklist/{{ user.user_id }}"><button>Blacklist</button></a>{% elif user.blacklisted %} <a href="/unblacklist/{{ user.user_id }}"><button>Unblacklist</button></a>{% endif %}<br>
 
         {% elif user.role == 'user' %}
-            {{ user.user_name }}<br>
+            {{ user.user_name }} &nbsp; {% if not user.blacklisted %} <a href="/blacklist/{{ user.user_id }}"><button>Blacklist</button></a> {% elif user.blacklisted %} <a href="/unblacklist/{{ user.user_id }}"><button>Unblacklist</button></a> {% endif %}<br>
 
         {% endif %}
     {% endfor %}
-</body>
-</html>
+{% endblock %}

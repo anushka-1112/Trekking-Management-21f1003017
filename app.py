@@ -40,9 +40,9 @@ def login():
             if user.role=='admin':
                 treks=Trek.query.all()
                 return redirect('/admin_dashboard')
-            if user.role=='trek_staff':
+            if user.role=='trek_staff' and user.blacklisted == False:
                 return render_template('trek_staff_dashboard.html', approved_status = user.approved)
-            if user.role=='user':
+            if user.role=='user' and user.blacklisted==False:
                 return render_template('user_dashboard.html')
         else:
             return render_template('login.html')
@@ -134,6 +134,25 @@ def approve_staff_profile(user_id):
     user.approved=True
     db.session.commit()
     return redirect('/admin_dashboard')
+
+@app.route('/blacklist/<int:user_id>')
+def blacklist_user(user_id):
+    if user_id:
+        user=db.session.get(User, user_id)
+        if user and user.role in ('trek_staff', 'user'):
+            user.blacklisted=True
+            db.session.commit()
+    return redirect('/admin_dashboard')
+
+@app.route('/unblacklist/<int:user_id>')
+def unblacklist_user(user_id):
+    if user_id:
+        user=db.session.get(User, user_id)
+        if user and user.role in ('trek_staff', 'user'):
+            user.blacklisted=False
+            db.session.commit()
+    return redirect('/admin_dashboard')
+
 
 # @app.route('/update_trek/<int:trek_id>', methods=['GET', 'POST'])
 # def update_trek(trek_id):
